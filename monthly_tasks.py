@@ -207,7 +207,7 @@ def analyst_task_printer(task_dic):
             month_count += 1
 
 
-print('\n\n\n\n' + '----- Pipette Tasks -----')
+print('\n\n' + '------ Pipette Tasks ------')
 analyst_task_printer(p_tasks)
-print('\n\n\n\n' + '----- Volumetric Flask Tasks -----')
+print('\n\n\n\n' + '------ Volumetric Flask Tasks ------')
 analyst_task_printer(v_tasks)
