@@ -31,10 +31,6 @@ for analyst in analyst_lst:
     p_task_count[analyst] = 0
     v_task_count[analyst] = 0
 
-task_per_analyst = (12 * int(input_months)) / int(input_analyst)
-lower_analyst_than_tasks = int(input_analyst) < 6
-equal_task_analyst = int(input_analyst) == 6
-
 
 def not_repeated(temp_dict, final_dict):
     bool_response = True
