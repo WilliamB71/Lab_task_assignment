@@ -1,7 +1,9 @@
 import random
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import xlsxwriter
 
+date = datetime.now()
 number_lst = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 task_dict = {"Pipettes": ["1", "2", "4", "5", "10", "20"],
              "Vol. Flasks": ["25", "50", "50 amber", "100", "100 amber", "250"]}
@@ -193,8 +195,6 @@ for month in range(int(input_months)):
     else:
         print('Error')
 
-date = datetime.now()
-
 
 def analyst_task_printer(task_dic):
     for pers, tasks in task_dic.items():
@@ -207,7 +207,45 @@ def analyst_task_printer(task_dic):
             month_count += 1
 
 
-print('\n\n' + '------ Pipette Tasks ------')
-analyst_task_printer(p_tasks)
-print('\n\n\n\n' + '------ Volumetric Flask Tasks ------')
-analyst_task_printer(v_tasks)
+end_month = date + relativedelta(months=int(input_months))
+workbook = xlsxwriter.Workbook('Monthly_task_assignment_workbook.xlsx')
+worksheet = workbook.add_worksheet('Tasks ' + date.strftime('%m' + '_' + '%y') + ' '
+                                   + end_month.strftime('%m' + '_' + '%y'))
+
+
+def workbook_creation(task_d: dict, type_of_task: str, starting_column: int):
+    head = workbook.add_format()
+    head.set_font_size(16)
+    head.set_bold(True)
+    bold = workbook.add_format({'bold': True})
+    worksheet.write(0, starting_column, type_of_task, head)
+    row = 1
+    col = starting_column
+
+    for pers, t_l in task_d.items():
+        mnth_count = 1
+        row += 1
+        worksheet.write(row, 1, pers, bold)
+        row += 1
+
+        for months_task_s in t_l:
+
+            tsk_month = date + relativedelta(months=mnth_count)
+            worksheet.write(row, 0, tsk_month.strftime('%B' + ' %y'))
+            mnth_count += 1
+
+            if type(months_task_s) == list:
+                combined_tasks = ''
+                for single_task in months_task_s:
+                    combined_tasks += str(single_task) + ', '
+                worksheet.write(row, col, combined_tasks[:-2])
+                row += 1
+            else:
+                worksheet.write(row, col, months_task_s)
+                row += 1
+
+
+workbook_creation(p_tasks, 'Pipette Tasks', 1)
+workbook_creation(v_tasks, 'Volumetric Tasks', 3)
+
+workbook.close()
