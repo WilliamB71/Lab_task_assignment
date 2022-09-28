@@ -5,8 +5,8 @@ import xlsxwriter
 
 date = datetime.now()
 number_lst = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
-task_dict = {"Pipettes": ["1", "2", "4", "5", "10", "20"],
-             "Vol. Flasks": ["25", "50", "50 amber", "100", "100 amber", "250"]}
+task_dict = {"Pipettes": ["1mL", "2mL", "4mL", "5mL", "10mL", "20mL"],
+             "Vol. Flasks": ["25mL clear", "50mL clear", "50mL amber", "100mL clear", "100mL amber", "250mL clear"]}
 
 input_analyst: str = input("Enter number of analysts to complete tasks: ")
 for letter in input_analyst:
@@ -213,11 +213,18 @@ worksheet = workbook.add_worksheet('Tasks ' + date.strftime('%m' + '_' + '%y') +
                                    + end_month.strftime('%m' + '_' + '%y'))
 
 
-def workbook_creation(task_d: dict, type_of_task: str, starting_column: int):
+def formatting_workbook():
     head = workbook.add_format()
     head.set_font_size(16)
     head.set_bold(True)
-    bold = workbook.add_format({'bold': True})
+    title = workbook.add_format()
+    title.set_font_size(12)
+    title.set_bold(True)
+    return head, title
+
+
+def workbook_creation(task_d: dict, type_of_task: str, starting_column: int):
+    head, title = formatting_workbook()
     worksheet.write(0, starting_column, type_of_task, head)
     row = 1
     col = starting_column
@@ -225,7 +232,7 @@ def workbook_creation(task_d: dict, type_of_task: str, starting_column: int):
     for pers, t_l in task_d.items():
         mnth_count = 1
         row += 1
-        worksheet.write(row, 1, pers, bold)
+        worksheet.write(row, 1, pers, title)
         row += 1
 
         for months_task_s in t_l:
@@ -247,5 +254,8 @@ def workbook_creation(task_d: dict, type_of_task: str, starting_column: int):
 
 workbook_creation(p_tasks, 'Pipette Tasks', 1)
 workbook_creation(v_tasks, 'Volumetric Tasks', 3)
+
+worksheet.set_column(0, 1, 18)
+worksheet.set_column(3, 3, 22)
 
 workbook.close()
